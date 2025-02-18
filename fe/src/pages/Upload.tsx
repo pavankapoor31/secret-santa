@@ -83,11 +83,11 @@ export function Upload() {
       <div className="text-center mb-12">
         <h1 className="text-3xl font-bold text-gray-900">Upload Files</h1>
         <p className="mt-2 text-gray-600">
-          Upload your employee list
+          Upload your employee list and optionally include last year's assignments
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-1 ">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         {/* Employee List Upload */}
         <div
           {...employeesDropzone.getRootProps()}
@@ -106,7 +106,7 @@ export function Upload() {
         </div>
 
         {/* Previous Assignments Upload */}
-        {/* <div
+        <div
           {...previousAssignmentsDropzone.getRootProps()}
           className={`p-8 border-2 border-dashed rounded-lg text-center cursor-pointer transition-colors
             ${previousAssignmentsDropzone.isDragActive ? 'border-green-500 bg-green-50' : 'border-gray-300 hover:border-green-400'}`}
@@ -120,7 +120,7 @@ export function Upload() {
           <p className="mt-1 text-xs text-gray-400">
             CSV format: giver_email, receiver_email
           </p>
-        </div> */}
+        </div>
       </div>
 
       <div className="mt-8 flex justify-center">
