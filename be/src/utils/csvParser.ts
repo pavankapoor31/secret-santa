@@ -1,24 +1,32 @@
 import { parse } from 'fast-csv';
-import { Readable } from 'stream';
+import { Employee, PreviousAssignment } from '../types';
 
-interface EmployeeRow {
-  Employee_Name: string;
-  Employee_EmailID: string;
-}
-
-export const parseEmployeeCsv = (buffer: Buffer): Promise<EmployeeRow[]> => {
+export const parseEmployeesCSV = (buffer: Buffer): Promise<Employee[]> => {
   return new Promise((resolve, reject) => {
-    const employees: EmployeeRow[] = [];
-    const stream = Readable.from(buffer.toString());
-
-    stream
-      .pipe(parse({ headers: true, skipRows: 0 }))
-      .on('data', (row: EmployeeRow) => {
+    const employees: Employee[] = [];
+    
+    parse(buffer.toString(), { headers: true })
+      .on('error', error => reject(error))
+      .on('data', (row: Employee) => {
         if (row.Employee_Name && row.Employee_EmailID) {
           employees.push(row);
         }
       })
-      .on('error', reject)
       .on('end', () => resolve(employees));
+  });
+};
+
+export const parsePreviousAssignmentsCSV = (buffer: Buffer): Promise<PreviousAssignment[]> => {
+  return new Promise((resolve, reject) => {
+    const assignments: PreviousAssignment[] = [];
+    
+    parse(buffer.toString(), { headers: true })
+      .on('error', error => reject(error))
+      .on('data', (row: PreviousAssignment) => {
+        if (row.santa && row.recipient) {
+          assignments.push(row);
+        }
+      })
+      .on('end', () => resolve(assignments));
   });
 };

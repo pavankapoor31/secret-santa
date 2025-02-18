@@ -96,10 +96,10 @@ export function Results() {
                       {currentAssignments?.map((assignment, index) => (
                         <tr key={index}>
                           <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">
-                            {assignment.giver.name}
+                            {assignment.giver}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {assignment.receiver.name}
+                            {assignment.receiver}
                           </td>
                         </tr>
                       ))}

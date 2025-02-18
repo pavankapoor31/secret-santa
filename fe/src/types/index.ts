@@ -6,8 +6,8 @@ export interface Employee {
 }
 
 export interface Assignment {
-  giver: Employee;
-  receiver: Employee;
+  giver: string;
+  receiver: string;
 }
 
 export interface CSVData {

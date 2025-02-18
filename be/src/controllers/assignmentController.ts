@@ -1,9 +1,64 @@
 import { Request, Response, NextFunction } from 'express';
-import Employee from '../models/Employee';
-import Assignment from '../models/Assignment';
+import { parseEmployeesCSV, parsePreviousAssignmentsCSV } from '../utils/csvParser';
 import { AssignmentGenerator } from '../utils/assignmentGenerator';
+import { Employee, PreviousAssignment, Assignment } from '../types';
 import { AppError } from '../middleware/errorHandler';
-import { parse } from 'fast-csv';
+import { stringify } from 'fast-csv';
+
+// In-memory storage
+let employees: Employee[] = [];
+let previousAssignments: PreviousAssignment[] = [];
+let currentAssignments: Assignment[] = [];
+
+export const uploadEmployees = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.file) {
+      throw new AppError('No file uploaded', 400);
+    }
+
+    employees = await parseEmployeesCSV(req.file.buffer);
+    
+    if (employees.length === 0) {
+      throw new AppError('No valid employees found in CSV', 400);
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        employeeCount: employees.length
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const uploadPreviousAssignments = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.file) {
+      throw new AppError('No file uploaded', 400);
+    }
+
+    previousAssignments = await parsePreviousAssignmentsCSV(req.file.buffer);
+    
+    res.status(200).json({
+      status: 'success',
+      data: {
+        assignmentCount: previousAssignments.length
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const generateAssignments = async (
   req: Request,
@@ -11,33 +66,17 @@ export const generateAssignments = async (
   next: NextFunction
 ) => {
   try {
-    const currentYear = new Date().getFullYear();
-    const employees = await Employee.find();
-    
-    if (employees.length < 2) {
-      throw new AppError('Not enough employees to generate assignments', 400);
+    if (employees.length === 0) {
+      throw new AppError('No employees loaded. Please upload employees first.', 400);
     }
 
-    const previousAssignments = await Assignment.find({ 
-      year: currentYear - 1 
-    });
-
     const generator = new AssignmentGenerator();
-    const newAssignments = generator.generateAssignments(employees, previousAssignments);
-
-    // Save new assignments
-    await Assignment.deleteMany({ year: currentYear });
-    const savedAssignments = await Assignment.create(
-      newAssignments.map(assignment => ({
-        ...assignment,
-        year: currentYear
-      }))
-    );
+    currentAssignments = generator.generateAssignments(employees, previousAssignments);
 
     res.status(200).json({
       status: 'success',
       data: {
-        assignments: savedAssignments
+        assignmentCount: currentAssignments.length
       }
     });
   } catch (error) {
@@ -51,31 +90,15 @@ export const downloadAssignments = async (
   next: NextFunction
 ) => {
   try {
-    const currentYear = new Date().getFullYear();
-    const assignments = await Assignment.find({ year: currentYear })
-      .populate('giver')
-      .populate('receiver');
-
-    if (!assignments.length) {
-      throw new AppError('No assignments found for the current year', 404);
+    if (currentAssignments.length === 0) {
+      throw new AppError('No assignments generated yet', 400);
     }
 
     res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', `attachment; filename=secret-santa-${currentYear}.csv`);
+    res.setHeader('Content-Disposition', 'attachment; filename=secret-santa-assignments.csv');
 
-    const csvStream = parse({ headers: true });
-    csvStream.pipe(res);
-
-    assignments.forEach(assignment => {
-      csvStream.write({
-        Giver_Name: assignment.giver,
-        Giver_Email: assignment.giver,
-        Receiver_Name: assignment.receiver,
-        Receiver_Email: assignment.receiver
-      });
-    });
-
-    csvStream.end();
+    stringify(currentAssignments, { headers: true })
+      .pipe(res);
   } catch (error) {
     next(error);
   }
