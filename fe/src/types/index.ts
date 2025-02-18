@@ -6,8 +6,10 @@ export interface Employee {
 }
 
 export interface Assignment {
-  giver: string;
-  receiver: string;
+  Employee_Name:string,
+  Employee_EmailID:string,
+  Secret_Child_Name:string,
+  Secret_Child_EmailID:string
 }
 
 export interface CSVData {

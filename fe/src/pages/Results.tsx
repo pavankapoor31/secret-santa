@@ -96,10 +96,12 @@ export function Results() {
                       {currentAssignments?.map((assignment, index) => (
                         <tr key={index}>
                           <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">
-                            {assignment.giver}
+                            {assignment.Employee_Name}
+                            {assignment.Employee_EmailID}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {assignment.receiver}
+                            {assignment.Secret_Child_Name}
+                            {assignment.Secret_Child_EmailID}
                           </td>
                         </tr>
                       ))}
@@ -111,6 +113,13 @@ export function Results() {
           </div>
 
           <div className="mt-8 flex justify-center">
+          <button
+            onClick={handleGenerateAssignments}
+            className="inline-flex items-center mr-2 px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
+          >
+            Regenerate Assignments
+            <Gift className="ml-2 -mr-1 h-5 w-5" />
+          </button>
             <button
               onClick={handleDownload}
               className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700"
