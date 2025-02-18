@@ -58,8 +58,8 @@ export class AssignmentGenerator {
           availableRecipients.splice(recipientIndex, 1);
 
           tempAssignments.push({
-            santa: santa.Employee_Name,
-            recipient: recipient.Employee_Name
+            giver: santa.Employee_Name,
+            receiver: recipient.Employee_Name
           });
         }
 

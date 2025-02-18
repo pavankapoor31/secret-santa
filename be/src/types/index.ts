@@ -4,8 +4,8 @@ export interface Employee {
 }
 
 export interface Assignment {
-  santa: string;
-  recipient: string;
+  receiver: string;
+  giver: string;
 }
 
 export interface PreviousAssignment {

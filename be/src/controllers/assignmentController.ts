@@ -3,7 +3,7 @@ import { parseEmployeesCSV, parsePreviousAssignmentsCSV } from '../utils/csvPars
 import { AssignmentGenerator } from '../utils/assignmentGenerator';
 import { Employee, PreviousAssignment, Assignment } from '../types';
 import { AppError } from '../middleware/errorHandler';
-import { stringify } from 'fast-csv';
+import { format } from 'fast-csv';
 
 // In-memory storage
 let employees: Employee[] = [];
@@ -76,7 +76,8 @@ export const generateAssignments = async (
     res.status(200).json({
       status: 'success',
       data: {
-        assignmentCount: currentAssignments.length
+        assignmentCount: currentAssignments.length,
+        assignments:currentAssignments
       }
     });
   } catch (error) {
@@ -84,21 +85,27 @@ export const generateAssignments = async (
   }
 };
 
+
 export const downloadAssignments = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    if (currentAssignments.length === 0) {
+    if (!currentAssignments || currentAssignments.length === 0) {
       throw new AppError('No assignments generated yet', 400);
     }
 
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', 'attachment; filename=secret-santa-assignments.csv');
 
-    stringify(currentAssignments, { headers: true })
-      .pipe(res);
+    const csvStream = format({ headers: true });
+
+    csvStream.pipe(res);
+
+    currentAssignments.forEach((assignment) => csvStream.write(assignment));
+
+    csvStream.end(); // Ensure the stream is properly closed
   } catch (error) {
     next(error);
   }
