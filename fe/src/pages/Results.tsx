@@ -97,11 +97,11 @@ export function Results() {
                         <tr key={index}>
                           <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">
                             {assignment.Employee_Name}
-                            {assignment.Employee_EmailID}
+                            <span className='text-slate-400 pl-1'>{assignment.Employee_EmailID}</span>
                           </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
                             {assignment.Secret_Child_Name}
-                            {assignment.Secret_Child_EmailID}
+                           <span className='text-slate-400 pl-1'> {assignment.Secret_Child_EmailID}</span>
                           </td>
                         </tr>
                       ))}
