@@ -7,9 +7,9 @@ export const parseEmployeesCSV = (buffer: Buffer): Promise<Employee[]> => {
 
     parseString(buffer.toString(), { headers: true })
       .on('error', (error) => reject(error))
-      .on('data', (row: Record<string, string>) => {
+      .on('data', (row: any) => {
         if (row.Employee_Name && row.Employee_EmailID) {
-          employees.push(row as Employee);
+          employees.push(row);
         }
       })
       .on('end', () => resolve(employees));
@@ -24,7 +24,7 @@ export const parsePreviousAssignmentsCSV = (buffer: Buffer): Promise<PreviousAss
       .on('error', (error) => reject(error))
       .on('data', (row: Record<string, string>) => {
         if (row.santa && row.recipient) {
-          assignments.push(row as PreviousAssignment);
+          assignments.push(row as any);
         }
       })
       .on('end', () => resolve(assignments));
