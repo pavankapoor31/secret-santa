@@ -92,5 +92,5 @@ Feel free to fork this repo and submit a PR! Any contributions to improve the pr
 ---
 
 ## 📬 Contact
-For questions or suggestions, reach out via GitHub Issues or email **your-email@example.com**. 🚀
+For questions or suggestions, reach out via GitHub Issues or email **pavankapoor31@gmail.com**. 🚀
 
