@@ -21,7 +21,7 @@ The **Secret Santa Game** is a web application that automates the process of ass
 ### **Backend (Node.js + Express)**
 - 🚀 API powered by **Express.js**
 - 🔀 Randomization logic using **JavaScript**
-- 📁 File handling with **fs & csv-parser**
+- 📁 File handling with **fs & fast-csv**
 
 ---
 
