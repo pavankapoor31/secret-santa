@@ -8,8 +8,10 @@ export interface Employee {
 export interface Assignment {
   Employee_Name:string,
   Employee_EmailID:string,
+  Employee_Team:string,
   Secret_Child_Name:string,
-  Secret_Child_EmailID:string
+  Secret_Child_EmailID:string,
+  Secret_Child_Team:string
 }
 
 export interface CSVData {

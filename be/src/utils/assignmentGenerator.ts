@@ -20,6 +20,11 @@ export class AssignmentGenerator {
       return false;
     }
 
+    // Can't be assigned to same team if team information is available
+    if (santa.Employee_Team && recipient.Employee_Team && santa.Employee_Team === recipient.Employee_Team) {
+      return false;
+    }
+
     // Check if this pair existed in previous assignments
     return !previousAssignments.some(
       assignment => 
@@ -33,45 +38,32 @@ export class AssignmentGenerator {
     previousAssignments: PreviousAssignment[]
   ): Assignment[] {
     const assignments: Assignment[] = [];
-    let attempts = 0;
-    const maxAttempts = 100;
+    const shuffledEmployees = this.shuffle(employees);
+    const availableRecipients = JSON.parse(JSON.stringify(shuffledEmployees)) as Assignment[];
 
-    while (attempts < maxAttempts) {
-      try {
-        const shuffledEmployees = this.shuffle(employees);
-        const tempAssignments: Assignment[] = [];
-        const availableRecipients = [...shuffledEmployees];
+    for (const santa of shuffledEmployees) {
+      const validRecipients = availableRecipients.filter(recipient => 
+        this.isValidAssignment(santa, recipient, previousAssignments)
+      );
 
-        for (const santa of shuffledEmployees) {
-          const validRecipients = availableRecipients.filter(recipient => 
-            this.isValidAssignment(santa, recipient, previousAssignments)
-          );
-
-          if (validRecipients.length === 0) {
-            throw new Error('No valid recipient found');
-          }
-
-          const recipient = validRecipients[Math.floor(Math.random() * validRecipients.length)];
-          const recipientIndex = availableRecipients.findIndex(
-            r => r.Employee_Name === recipient.Employee_Name
-          );
-          availableRecipients.splice(recipientIndex, 1);
-
-          tempAssignments.push({
-            Employee_Name: santa.Employee_Name,
-            Employee_EmailID:santa.Employee_EmailID,
-            Secret_Child_Name: recipient.Employee_Name,
-            Secret_Child_EmailID:recipient.Employee_EmailID
-          });
-        }
-
-        return tempAssignments;
-      } catch (error) {
-        attempts++;
-        if (attempts === maxAttempts) {
-          throw new Error('Could not generate valid assignments after maximum attempts');
-        }
+      if (validRecipients.length === 0) {
+        throw new Error('No valid recipient found');
       }
+
+      const recipient = validRecipients[Math.floor(Math.random() * validRecipients.length)];
+      const recipientIndex = availableRecipients.findIndex(
+        r => r.Employee_Name === recipient.Employee_Name
+      );
+      availableRecipients.splice(recipientIndex, 1);
+
+      assignments.push({
+        Employee_Name: santa.Employee_Name,
+        Employee_EmailID: santa.Employee_EmailID,
+        Employee_Team: santa.Employee_Team,
+        Secret_Child_Name: recipient.Employee_Name,
+        Secret_Child_EmailID: recipient.Employee_EmailID,
+        Secret_Child_Team: recipient.Employee_Team,
+      });
     }
 
     return assignments;
