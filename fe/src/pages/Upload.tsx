@@ -134,12 +134,6 @@ export function Upload() {
             CSV format: Employee_Name,Employee_EmailID,Employee_Team
           </p>
         </div>
-          <button
-            onClick={downloadDummyCSVFile}
-            className="button-sm font-xs inline-flex items-center mt-1 px-2 py-1 border border-transparent rounded-md shadow-sm text-white bg-gray-600 hover:bg-indigo-700"
-            >
-            Download Dummy CSV File
-          </button>
         </div>
 
         {/* Previous Assignments Upload */}
@@ -159,7 +153,12 @@ export function Upload() {
           </p>
         </div>
       </div>
-
+      <button
+            onClick={downloadDummyCSVFile}
+            className="button-sm font-xs inline-flex items-center mt-1 px-2 py-1 border border-transparent rounded-md shadow-sm text-white bg-gray-600 hover:bg-indigo-700"
+            >
+            Download Dummy CSV File
+          </button>
       <div className="mt-8 flex justify-center">
         <button
           onClick={() => navigate('/results')}
